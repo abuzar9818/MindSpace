@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express=require('express');
 const app=express();
 const userModel=require('./models/user');
@@ -5,7 +6,13 @@ const postModel=require('./models/post');
 const cookieParser=require('cookie-parser');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
-require('dotenv').config();
+
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.log(err));
 
 
 app.set('view engine','ejs');
