@@ -10,6 +10,10 @@ const jwt=require('jsonwebtoken');
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+    console.warn("Warning: JWT_SECRET is not set in environment variables. JWT operations may fail.");
+}
+
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
@@ -29,11 +33,19 @@ app.get('/login',(req,res)=>{
     res.render('login');
 });
 
-app.get('/profile',isLoggedIn, async (req,res)=>{
-    let user=await userModel.findOne({email:req.user.email});
-    await user.populate('posts');
-    res.render('profile',{user});
-})
+app.get('/profile', isLoggedIn, async (req, res) => {
+    let user = await userModel
+        .findOne({ email: req.user.email })
+        .populate('posts');
+
+    if (!user) {
+        console.log("User not found in database for token:", req.user);
+        res.clearCookie('token');
+        return res.redirect('/login');
+    }
+
+    res.render('profile', { user });
+});
 
 app.get('/like/:id',isLoggedIn, async (req,res)=>{
     let post=await postModel.findOne({_id:req.params.id}).populate('user');
