@@ -78,7 +78,8 @@ app.post('/update/:id',isLoggedIn, async (req,res)=>{
 app.get('/feed', isLoggedIn, async (req, res) => {
     let posts = await postModel
         .find()
-        .populate('user'); // get post owner details
+        .populate('user');
+    .sort({ date: -1 }); 
 
     res.render('feed', {
         posts,
@@ -102,7 +103,10 @@ app.post('/post',isLoggedIn, async (req,res)=>{
 app.post('/register',async (req,res)=>{
    let{username,email,name,password,age}=req.body;
    let user= await userModel.findOne({email});
-   if(user) return res.status(500).send('User already exists');
+   if(user) {
+       console.log("User already exists with email:", email);
+       return res.redirect('/');
+   }
 
    bcrypt.genSalt(10,async (err,salt)=>{
     bcrypt.hash(password,salt,async (err,hash)=>{
@@ -113,9 +117,9 @@ app.post('/register',async (req,res)=>{
         password:hash,
         age
        });
-       let token=jwt.sign({email:email, userid:user._id},"shhh");
+       let token=jwt.sign({email:email, userid:user._id},JWT_SECRET);
         res.cookie('token',token);
-       res.send('User Registered Successfully');
+        return res.redirect('/profile');
     });
    });
 });
