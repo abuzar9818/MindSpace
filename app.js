@@ -127,15 +127,25 @@ app.post('/register',async (req,res)=>{
 app.post('/login',async (req,res)=>{
     let{email,password}=req.body;
     let user= await userModel.findOne({email});
-    if(!user) return res.status(500).send('Something Went Wrong');
+    if(!user) {
+        console.log("User not found with email:", email);
+        return res.redirect('/login');
+    }
 
     bcrypt.compare(password,user.password, (err,isMatch)=>{
-    if(isMatch){ 
-        let token=jwt.sign({email:email, userid:user._id},"shhh");
-        res.cookie('token',token);
-        return res.redirect('/profile');
-    }
-    else return res.redirect('/login');
+    if(err) {
+            console.log("Error comparing passwords:", err);
+            return res.redirect('/login');
+        }
+     if(isMatch){ 
+            let token=jwt.sign({email:email, userid:user._id},JWT_SECRET);
+            res.cookie('token',token);
+            return res.redirect('/profile');
+        }
+        else {
+            console.log("Password mismatch for user:", email);
+            return res.redirect('/login');
+        }
     });
 
 });
