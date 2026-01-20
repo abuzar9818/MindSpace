@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post | MindSpace</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body>
+    <div class="w-full min-h-screen bg-zinc-900 text-white">
+
+        <nav class="w-full bg-zinc-800 border-b border-zinc-700 px-10 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-blue-500">Notes</h1>
+                <a href="/logout"
+                    class="text-sm hover:text-gray-300 bg-red-500 rounded-md px-4 py-2 inline-block transition-colors">
+                    Logout
+                </a>
+            </div>
+        </nav>
+
+        <div class="p-10">
+            <h5 class="mb-5 text-gray-300">Edit Your Post</h5>
+            <form action="/update/<%= post._id %>" method="post">
+                <textarea placeholder="What's in your mind?"
+                    class="block p-3 outline-none h-48 w-1/3 resize-none bg-transparent border-2 border-zinc-800 rounded-md"
+                    name="content"><%= post.content %></textarea>
+                <input class="bg-yellow-500 rounded-md px-3 py-2 block mt-3 hover:bg-yellow-600 cursor-pointer text-black font-medium"
+                    type="submit" value="Update Post">
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
