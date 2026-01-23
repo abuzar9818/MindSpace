@@ -15,6 +15,10 @@
             <div class="flex justify-between items-center">
                 <h1 class="text-2xl font-bold text-blue-500">MindSpace</h1>
                 <div class="flex gap-3 items-center">
+                 <a href="/profile/upload"
+                class="text-sm bg-blue-600 hover:bg-blue-700 rounded-md px-4 py-2 inline-block transition-colors">
+                Edit Profile
+                </a>
                 <a href="/feed"class="text-sm hover:text-gray-300 bg-gray-500 rounded-md px-4 py-2 inline-block transition-colors">Explore Posts</a>
                 <a href="/logout"
                     class="text-sm hover:text-gray-300 bg-red-500 rounded-md px-4 py-2 inline-block transition-colors">
@@ -25,7 +29,12 @@
         </nav>
 
         <div class="p-10">
-            <h3 class="text-3xl mb-6"><span class="font-light">Welcome</span>, <%= user.name %> 👋🏻</h3>
+            <div class="flex items-center gap-5 mb-3">
+                <div class="w-15 h-15 rounded-md overflow-hidden">
+                    <img class="w-full h-full object-cover" src="/images/uploads/<%=user.profilepic%>" alt="">
+                </div>
+                <h3 class="text-3xl "><span class="font-light">Welcome</span>, <%= user.name %> 👋🏻</h3>
+            </div>
             <h5 class="mb-5 text-gray-300">Share your thoughts with the world</h5>
             <form action="/post" method="post">
                 <textarea placeholder="What's in your mind?"
