@@ -4,8 +4,11 @@ const app=express();
 const userModel=require('./models/user');
 const postModel=require('./models/post');
 const cookieParser=require('cookie-parser');
+const mongoose = require('mongoose');
 const bcrypt=require('bcrypt');
+const path=require('path');
 const jwt=require('jsonwebtoken');
+const upload = require('./config/multerconfig');
 
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -21,6 +24,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.set('view engine','ejs');
 app.use(express.urlencoded({extended:true}));   
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -28,6 +32,18 @@ app.use(cookieParser());
 app.get('/',(req,res)=>{
     res.render('index');
 });
+
+app.get('/profile/upload',isLoggedIn,(req,res)=>{
+    res.render('profileupload');
+}); 
+
+app.post('/upload', isLoggedIn ,upload .single('image'), async (req,res)=>{
+    let user=await userModel.findOne({email:req.user.email});
+    user.profilepic=req.file.filename;
+    await user.save();
+    res.redirect('/profile');
+
+})
 
 app.get('/login',(req,res)=>{
     res.render('login');
@@ -170,6 +186,7 @@ function isLoggedIn(req, res, next) {
     return res.redirect('/login');
   }
 }
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
